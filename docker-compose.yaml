@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  node:
+    container_name: nest_node
+    image: node:20.11.0-alpine
+    tty: true
+    volumes:
+      - ./:/work
+    ports:
+      - 3000:${APP_PORT}
+    environment:
+      - HOST=0.0.0.0
+    working_dir: /work
+    depends_on:
+      - db
+  db:
+    container_name: nest_mysql
+    image: mysql:8.3.0
+    volumes:
+      - nest-data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 3307:3306
+    restart: always
+
+volumes:
+  nest-data:
