@@ -11,6 +11,16 @@ export class MailerService extends BaseService {
   private readonly transporter: nodemailer.Transporter;
   constructor(@Inject(mailerConfigure.KEY) private mailerConfig: ConfigType<typeof mailerConfigure>) {
     super();
+    this.transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: this.mailerConfig.user,
+        pass: this.mailerConfig.password,
+      },
+    });
   }
 
   async sendEmail(

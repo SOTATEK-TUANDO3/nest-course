@@ -4,7 +4,9 @@ import { RegisterDto } from './dto/register.dto';
 import { ApiOperation } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { VerifyDto } from './dto/verify.dto';
+import { Public } from 'src/app/decorators/public';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

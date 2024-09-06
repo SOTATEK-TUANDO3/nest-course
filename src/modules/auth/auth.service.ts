@@ -94,9 +94,9 @@ export class AuthService extends BaseService {
       },
     );
 
-    const url = `${process.env.APP_URL}/verify-account?token=${token}`;
+    const url = `${process.env.API_URL}/verify-account?token=${token}`;
     const to = [email];
-    const templatePath = 'resources/templates/verify-email.ejs';
+    const templatePath = 'public/email-templates/verify-email.ejs';
     const templateData = { clientVerifyUrl: url };
     const subject = 'Vefiry your account';
     await this.mailerService.sendEmail(to, subject, templatePath, templateData);

@@ -1,9 +1,3 @@
-export enum userType {
-  ADMIN = 'admin',
-  INSTRUCTOR = 'instructor',
-  STUDENT = 'student',
-}
-
 export enum OrderBy {
   ASC = 'ASC',
   DESC = 'DESC',
@@ -20,8 +14,7 @@ export enum accountConfirmationType {
 
 export enum Roles {
   ADMIN = 'ADMIN',
-  INSTRUCTOR = 'INSTRUCTOR',
-  STUDENT = 'STUDENT',
+  CUSTOMER = 'CUSTOMER',
 }
 
 export enum PagesConfig {

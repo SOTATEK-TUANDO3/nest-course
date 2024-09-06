@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -8,32 +7,25 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './role.entity';
+import { Product } from './product.entity';
+import { Exclude } from 'class-transformer';
 
-@Entity('users')
-export class User {
+@Entity('categories')
+export class Category {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({
-    unique: true,
-  })
-  userName: string;
-
-  @Column({
-    unique: true,
-  })
-  email: string;
+  @ManyToMany(() => Product, (product: Product) => product.categories)
+  products: Product[];
 
   @Column()
-  @Exclude()
-  password: string;
+  name: string;
 
   @Column()
-  isVerified: boolean;
+  slug: string;
 
-  @ManyToMany(() => Role, (role: Role) => role.roleUsers)
-  roles: Role[];
+  @Column()
+  description: string;
 
   @CreateDateColumn()
   createdAt: string;

@@ -1,3 +1,5 @@
+import { DataSource } from 'typeorm';
+
 require('dotenv').config();
 
 const dataSourceDefaultOptions = {
@@ -7,16 +9,13 @@ const dataSourceDefaultOptions = {
   username: process.env.DB_USERNAME || '',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_DATABASE || '',
-  // type: 'mysql' as any,
-  // host: 'db',
-  // port: '3307',
-  // username: 'root',
-  // password: 'secret',
-  // database: 'ulearn',
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: false,
   autoLoadEntities: true,
   timezone: 'local',
+  migrations: ['dist/src/database/migrations/*.js'],
+  seeds: ['dist/src/database/seeders/*.js'],
 };
 
+export const AppDataSource = new DataSource(dataSourceDefaultOptions);
 export default dataSourceDefaultOptions;
