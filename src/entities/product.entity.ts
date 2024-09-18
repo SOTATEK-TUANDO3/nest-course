@@ -39,6 +39,9 @@ export class Product {
   @Column({ type: 'json' })
   images: string[];
 
+  @Column()
+  price: number;
+
   @CreateDateColumn()
   createdAt: string;
 
