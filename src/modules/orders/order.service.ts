@@ -6,4 +6,6 @@ export class OrderService extends BaseService {
   constructor() {
     super();
   }
+
+  async createOrder() {}
 }

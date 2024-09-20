@@ -10,6 +10,8 @@ import { JwtAuthGuard } from './auth/jwt.guard';
 import { MailModule } from './Mailer/mail.module';
 import { ProductModule } from './product/product.module';
 import { AdminModule } from './admin/admin.module';
+import { UploadModule } from './upload/upload.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -18,10 +20,12 @@ import { AdminModule } from './admin/admin.module';
       isGlobal: true,
       cache: true,
     }),
+    StripeModule.forRootAsync(),
     AuthModule,
     MailModule,
     ProductModule,
     AdminModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [
