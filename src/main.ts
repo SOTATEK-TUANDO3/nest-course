@@ -4,10 +4,12 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { constants } from './app/constants/common.constant';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', '..', 'public'));
+  app.use('/uploadedFiles', express.static(join(process.cwd(), 'uploadedFiles')));
   app.enableCors();
 
   // swagger
