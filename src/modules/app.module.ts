@@ -12,6 +12,8 @@ import { ProductModule } from './product/product.module';
 import { AdminModule } from './admin/admin.module';
 import { UploadModule } from './upload/upload.module';
 import { StripeModule } from './stripe/stripe.module';
+import { OrderModule } from './orders/order.module';
+import { AuthUserModule } from './auth/auth-user.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { StripeModule } from './stripe/stripe.module';
     ProductModule,
     AdminModule,
     UploadModule,
+    OrderModule,
+    AuthUserModule,
   ],
   controllers: [AppController],
   providers: [

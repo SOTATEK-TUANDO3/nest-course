@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Exclude } from 'class-transformer';
+import { Order } from './order.entity';
 
 @Entity('products')
 export class Product {
@@ -29,6 +30,20 @@ export class Product {
     },
   })
   categories: Category[];
+
+  @ManyToMany(() => Order, (order: Order) => order.products)
+  @JoinTable({
+    name: 'product_order',
+    joinColumn: {
+      name: 'product_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'order_id',
+      referencedColumnName: 'id',
+    },
+  })
+  orders: Order[];
 
   @Column()
   name: string;
