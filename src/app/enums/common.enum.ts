@@ -30,3 +30,15 @@ export enum CourseType {
   PUBLIC = 0,
   PRIVATE = 1,
 }
+
+export enum OrderStatus {
+  PROCESSING = 0,
+  SHIPPED = 1,
+  DELIVERED = 2,
+  CANCELED = 3,
+}
+
+export enum PaymentStatus {
+  UN_PAID = 0,
+  PAID = 1,
+}
