@@ -10,10 +10,13 @@ export class Review {
   customerId: number;
 
   @Column()
-  productIt: number;
+  productId: number;
 
   @Column()
   text: string;
+
+  @Column()
+  rating: number;
 
   @CreateDateColumn()
   createdAt: string;

@@ -39,8 +39,7 @@ export class UserGuard extends AuthGuard('jwt') {
       .innerJoin('role.roleUsers', 'roleUsers')
       .where('roleUsers.id = :userId', { userId: user.id })
       .getOne();
-    console.log('accessTypes', accessTypes);
-    console.log('role', role);
+
     if (!accessTypes || accessTypes.includes(role.code as Roles)) {
       return user;
     }
