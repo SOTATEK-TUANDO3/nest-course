@@ -14,6 +14,9 @@ import { UploadModule } from './upload/upload.module';
 import { StripeModule } from './stripe/stripe.module';
 import { OrderModule } from './orders/order.module';
 import { AuthUserModule } from './auth/auth-user.module';
+import { WishProductModule } from './wish-product/wish-product.module';
+import { ReviewModule } from './review/review.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { AuthUserModule } from './auth/auth-user.module';
     UploadModule,
     OrderModule,
     AuthUserModule,
+    WishProductModule,
+    ReviewModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [

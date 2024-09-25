@@ -10,7 +10,7 @@ export class Rating {
   customerId: number;
 
   @Column()
-  productIt: number;
+  productId: number;
 
   @Column()
   rating: number;
