@@ -6,6 +6,9 @@ export class Inventory {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
+  @Column()
+  productId: number;
+
   @OneToOne(() => Product)
   @JoinTable({ name: 'productId' })
   product: Product;

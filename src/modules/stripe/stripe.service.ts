@@ -1,8 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
-import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
-import { CreateOrderDto } from '../orders/dto/create-order.dto';
 import { OrderService } from '../orders/order.service';
+import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 
 @Injectable()
 export class StripeService {
@@ -26,7 +25,7 @@ export class StripeService {
   }
 
   async createCheckoutSession(createCheckoutSessionDto: CreateCheckoutSessionDto) {
-    const { priceDefault, address, phone, products, totalAmount } = createCheckoutSessionDto;
+    const { priceDefault, address, phone, products } = createCheckoutSessionDto;
     const session = await this.stripe.checkout.sessions.create({
       line_items: [
         {
@@ -41,13 +40,12 @@ export class StripeService {
         address,
         phone,
         products: JSON.stringify(products),
-        totalAmount,
       },
     });
     return session.url;
   }
 
-  async fulfillCheckout(sessionId, metadata: any) {
+  async fulfillCheckout(sessionId, metadata: any, totalAmount: number) {
     if (!metadata) {
       throw new BadRequestException('Metadata was not found');
     }
@@ -60,15 +58,13 @@ export class StripeService {
     // Check the Checkout Session's payment_status property
     // to determine if fulfillment should be peformed
     if (checkoutSession.payment_status !== 'unpaid') {
-      await this.orderService.createOrder(metadata);
+      await this.orderService.createOrder(metadata, totalAmount);
     }
   }
 
   async webHook(event: any) {
     if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
-      // attach total_amount into metadata
-
-      await this.fulfillCheckout(event.data.object.id, event.data.object.metadata);
+      await this.fulfillCheckout(event.data.object.id, event.data.object.metadata, event.data.object.amount_total);
     }
 
     return;

@@ -5,6 +5,7 @@ import { UserGuard } from 'src/app/guards/user.guard';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
 import { StripeService } from './stripe.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/app/decorators/public';
 
 @ApiTags('Stripe')
 @ApiBearerAuth()
@@ -31,7 +32,8 @@ export class StripeController {
     return this.stripeService.createCheckoutSession(createCheckoutSessionDto);
   }
 
-  @AllowAccess(Roles.CUSTOMER)
+  // @AllowAccess(Roles.CUSTOMER)
+  @Public()
   @Post('webhook')
   async webHook(@Body() payload: any) {
     return this.stripeService.webHook(payload);
