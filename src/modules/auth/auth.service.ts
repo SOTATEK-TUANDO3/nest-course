@@ -76,7 +76,9 @@ export class AuthService extends BaseService {
         message: 'Your account is not verified.Please check your email to verify your account.',
       };
     }
+
     if (bcrypt.compare(password, user.password)) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = user;
       return {
         access_token: this.jwtService.sign(result),

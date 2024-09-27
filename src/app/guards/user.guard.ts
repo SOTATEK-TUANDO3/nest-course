@@ -33,6 +33,7 @@ export class UserGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
     if (isPublic) return true;
+
     const role = await this.dataSource
       .getRepository(Role)
       .createQueryBuilder('role')

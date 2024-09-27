@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { constants } from 'src/app/constants/common.constant';
 import { OrderStatus, PaymentStatus } from 'src/app/enums/common.enum';
@@ -38,11 +38,12 @@ export class OrderService extends BaseService {
     return this.responseOk(orders);
   }
 
-  async createOrder(createOrderDto: any) {
-    let { address, phone, products, totalAmount } = createOrderDto;
+  async createOrder(createOrderDto: any, totalAmount: number) {
+    let { address, phone, products } = createOrderDto;
 
     // convert products to array
     products = JSON.parse(products);
+    console.log('products', products);
 
     const user = await this.userRepo.findOneBy({ id: this.currentUserId });
     if (!user) {
@@ -55,25 +56,17 @@ export class OrderService extends BaseService {
     order.address = address;
     order.phone = phone;
 
-    const payment = this.paymentRepo.create();
-    payment.totalAmount = totalAmount;
-    payment.orderId = order.id;
-    payment.status = PaymentStatus.PAID;
-    payment.paymentMethod = 'online';
-
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       await this.orderRepo.save(order);
-      await this.paymentRepo.save(payment);
       const promises = products.map(async (item) => {
         const product = await this.productRepo.findOneBy({ id: item.productId });
         const inventory = await this.inventoryRepo
           .createQueryBuilder('inventory')
-          .leftJoin('inventory.product', 'product')
-          .where('product.id = :id', { id: product.id })
+          .where('inventory.productId = :productId', { productId: product.id })
           .getOne();
 
         if (inventory.quantity >= item.quantity) {
@@ -90,10 +83,19 @@ export class OrderService extends BaseService {
         }
       });
       await Promise.all(promises);
+
+      const payment = this.paymentRepo.create();
+      payment.totalAmount = totalAmount;
+      payment.status = PaymentStatus.PAID;
+      payment.paymentMethod = 'online';
+      payment.orderId = order.id;
+      await this.paymentRepo.save(payment);
+
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.log(error);
+      throw new InternalServerErrorException();
     } finally {
       await queryRunner.release();
     }

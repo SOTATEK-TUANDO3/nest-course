@@ -6,19 +6,21 @@ import { Product } from 'src/entities/product.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Category } from 'src/entities/category.entity';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Inventory } from 'src/entities/inventory.entity';
 
 @Injectable()
 export class AdminProductService extends BaseService {
   constructor(
     @InjectRepository(Product) private readonly productRepo: Repository<Product>,
     @InjectRepository(Category) private readonly categoryRepo: Repository<Category>,
+    @InjectRepository(Inventory) private readonly inventoryRepo: Repository<Inventory>,
     private readonly dataSource: DataSource,
   ) {
     super();
   }
 
   async createProduct(createProductDto: CreateProductDto) {
-    const { name, description, price, images, categoryId } = createProductDto;
+    const { name, description, price, images, categoryId, quantity } = createProductDto;
     const product = await this.productRepo.findOneBy({ name });
     if (product) {
       throw new BadRequestException('Product existed');
@@ -32,15 +34,21 @@ export class AdminProductService extends BaseService {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    const newProduct = this.productRepo.create();
-    try {
-      newProduct.name = name;
-      newProduct.description = description;
-      newProduct.price = price;
-      newProduct.categories = [category];
-      newProduct.images = images;
 
+    const newProduct = this.productRepo.create();
+    newProduct.name = name;
+    newProduct.description = description;
+    newProduct.price = price;
+    newProduct.categories = [category];
+    newProduct.images = images;
+
+    const newInventory = this.inventoryRepo.create();
+    newInventory.quantity = quantity;
+
+    try {
       await this.productRepo.save(newProduct);
+      newInventory.productId = newProduct.id;
+      await this.inventoryRepo.save(newInventory);
       await queryRunner.commitTransaction();
     } catch (error) {
       console.log(error);
