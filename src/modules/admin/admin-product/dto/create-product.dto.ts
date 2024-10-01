@@ -30,4 +30,9 @@ export class CreateProductDto {
   @IsNumber()
   @IsNotEmpty()
   quantity: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  currency: string;
 }
