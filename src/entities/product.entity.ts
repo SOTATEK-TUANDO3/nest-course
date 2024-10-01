@@ -21,11 +21,11 @@ export class Product {
   @JoinTable({
     name: 'category_product',
     joinColumn: {
-      name: 'category_id',
+      name: 'product_id',
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'product_id',
+      name: 'category_id',
       referencedColumnName: 'id',
     },
   })
@@ -56,6 +56,15 @@ export class Product {
 
   @Column()
   price: number;
+
+  @Column()
+  defaultPrice: string;
+
+  @Column()
+  prodId: string;
+
+  @Column()
+  currency: string;
 
   @CreateDateColumn()
   createdAt: string;

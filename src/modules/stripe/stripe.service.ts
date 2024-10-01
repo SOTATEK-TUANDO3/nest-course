@@ -2,6 +2,8 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { OrderService } from '../orders/order.service';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
+import { CreateProductStripeDto } from './dto/create-product.dto';
+import { UpdateProductDto } from '../admin/admin-product/dto/update-product.dto';
 
 @Injectable()
 export class StripeService {
@@ -68,5 +70,61 @@ export class StripeService {
     }
 
     return;
+  }
+
+  async findProduct(id: string) {
+    return await this.stripe.products.retrieve(id);
+  }
+
+  async createProduct(createProductDto: CreateProductStripeDto) {
+    return await this.stripe.products.create(createProductDto);
+  }
+
+  async createPrice(priceDto: { product: string; currency: string; unit_amount: number }) {
+    const price = await this.stripe.prices.create(priceDto);
+    await this.stripe.products.update(priceDto.product, {
+      default_price: price.id,
+    });
+    return price;
+  }
+
+  async deleteProduct(id: string) {
+    return await this.stripe.products.update(id, {
+      active: false,
+    });
+  }
+
+  async updateProduct(id: string, payload: UpdateProductDto) {
+    const { name, description, images, price, currency } = payload;
+
+    await this.updatePrice(id, price, currency);
+    await this.stripe.products.update(id, {
+      ...(name && { name }),
+      ...(description && { description }),
+      ...(images.length && { images }),
+    });
+  }
+
+  async updatePrice(id: string, price: number, currency: string = 'usd') {
+    const prices = await this.stripe.prices.list({
+      product: id,
+      active: true,
+    });
+
+    if (!prices.data.length) {
+      throw new BadRequestException('No active prices found for this product.');
+    }
+
+    // create new price for product
+    await this.stripe.prices.create({
+      unit_amount: price,
+      currency: currency,
+      product: id,
+    });
+
+    // archive the old price
+    await this.stripe.prices.update(prices.data[0].id, {
+      active: false,
+    });
   }
 }
